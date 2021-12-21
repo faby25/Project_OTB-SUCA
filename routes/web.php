@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminPostController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 /*
@@ -25,10 +27,42 @@ use App\Http\Controllers\HomeController;
 //   return "En esta pagina podras a crear un Usuario";
 // });
 
-  Route::get('/', function(){
-    return view('welcome');
-  });
+  // Route::get('/', function(){
+  //   return view('welcome');
+  // });
 
   Route::get('Notificaciones', function(){
     return view('Notificaciones');
   });
+
+  Route::get('/', function(){
+    return view('posts',[
+      'posts'=>App\Models\Post::latest()->get()//all()//with('category','user')->//to always charge the category and user
+    ]);
+  });
+
+Route::get('posts/{post:slug}',function(App\Models\Post $post){
+  return view('post',[
+    'post'=>$post
+  ]);
+});
+
+Route::get('categories/{category:slug}',function(App\Models\Category $category){
+  return view('posts',[
+    'posts'=>$category->posts
+  ]);
+});
+
+Route::get('users/{user:username}',function(App\Models\User $user){
+  //dd($user);
+  return view('posts',[
+    'posts'=>$user->posts
+  ]);
+});
+
+
+
+
+
+
+Route::get('admin/posts',[AdminPostController::class,'index'])->middleware('admin');
